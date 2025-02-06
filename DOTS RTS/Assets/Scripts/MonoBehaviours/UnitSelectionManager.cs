@@ -12,7 +12,7 @@ public class UnitSelectionManager : MonoBehaviour
 
             EntityManager entityManager = World.DefaultGameObjectInjectionWorld.EntityManager;
             EntityQuery entityQuery = new EntityQueryBuilder(Allocator.Temp)
-                .WithAll<UnitMover>()
+                .WithAll<UnitMover, Selected>()
                 .Build(entityManager);
 
             NativeArray<Entity> entityArray = 
