@@ -1,4 +1,5 @@
 using Unity.Entities;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class SelectedAuthoring : MonoBehaviour {
@@ -24,4 +25,7 @@ public struct Selected : IComponentData, IEnableableComponent {
 
     public Entity visualEntity;
     public float showScale;
+
+    public bool OnSelected;
+    public bool OnDeselected;
 }
