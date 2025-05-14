@@ -14,16 +14,16 @@ public partial struct UnitMoverSystem : ISystem
     [BurstCompile]
     public void OnUpdate(ref SystemState state)
     {
-        foreach (var (localTransform, moveSpeed, physicsVelocity) in
-                 SystemAPI.Query<RefRW<LocalTransform>, RefRO<MoveSpeed>, RefRW<PhysicsVelocity>>())
+        foreach (var (localTransform, unitMover, physicsVelocity) in
+                 SystemAPI.Query<RefRW<LocalTransform>, RefRO<UnitMover>, RefRW<PhysicsVelocity>>())
         {
-            var targetPosition = (float3)MouseWorldPosition.Instance.GetPosition();
+            var targetPosition = unitMover.ValueRO.TargetPosition;
             var moveDirection = math.normalize(targetPosition - localTransform.ValueRO.Position);
             // localTransform.ValueRW.Rotation = quaternion.LookRotationSafe(moveDirection, math.up());
-            var rotationSpeed = 10f;
             localTransform.ValueRW.Rotation = math.slerp(localTransform.ValueRW.Rotation,
-                quaternion.LookRotationSafe(moveDirection, math.up()), rotationSpeed * SystemAPI.Time.DeltaTime);
-            physicsVelocity.ValueRW.Linear = moveDirection * moveSpeed.ValueRO.Value;
+                quaternion.LookRotationSafe(moveDirection, math.up()),
+                unitMover.ValueRO.RotationSpeed * SystemAPI.Time.DeltaTime);
+            physicsVelocity.ValueRW.Linear = moveDirection * unitMover.ValueRO.MoveSpeed;
             physicsVelocity.ValueRW.Angular = 0;
             // localTransform.ValueRW.Position += moveDirection * moveSpeed.ValueRO.Value * SystemAPI.Time.DeltaTime;
         }
