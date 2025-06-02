@@ -48,7 +48,17 @@ public partial struct UnitMoverJob : IJobEntity
     public void Execute(ref LocalTransform localTransform, in UnitMover unitMover, ref PhysicsVelocity physicsVelocity)
     {
         var targetPosition = unitMover.TargetPosition;
-        var moveDirection = math.normalize(targetPosition - localTransform.Position);
+        var moveDirection = targetPosition - localTransform.Position;
+        // 到达这个距离的平方 就认为单位到了指定位置
+        var reachedTargetDistanceSq = 2f;
+        if (math.lengthsq(moveDirection) < reachedTargetDistanceSq)
+        {
+            physicsVelocity.Linear = 0;
+            physicsVelocity.Angular = 0;
+            return;
+        }
+
+        moveDirection = math.normalize(targetPosition - localTransform.Position);
         localTransform.Rotation = math.slerp(localTransform.Rotation,
             quaternion.LookRotationSafe(moveDirection, math.up()),
             unitMover.RotationSpeed * deltaTime);
